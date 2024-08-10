@@ -6,6 +6,16 @@ spring:
     port: ${RABBITMQ_PORT:5672}
     username: ${RABBITMQ_USER:guest}
     password: ${RABBITMQ_PASSWORD:guest}
+
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          initial-interval: 2000 # 5 seconds
+          max-interval: 300000 # 300 seconds
+          multiplier: 2
+
 server:
   port: 0
 eureka:
