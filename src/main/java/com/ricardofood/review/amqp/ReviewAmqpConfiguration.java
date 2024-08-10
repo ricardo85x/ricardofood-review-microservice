@@ -32,6 +32,16 @@ public class ReviewAmqpConfiguration {
         return  QueueBuilder
                 .durable(
                         PaymentQueueName.PAYMENT_REVIEW_INFO
+                )
+                .deadLetterExchange(PaymentExchangeName.PAYMENT_EXCHANGE_DLQ)
+                .build();
+    }
+
+    @Bean
+    public Queue reviewInfoQueueDLQ() {
+        return  QueueBuilder
+                .durable(
+                        PaymentQueueName.PAYMENT_REVIEW_INFO_DLQ
                 ).build();
     }
 
@@ -43,10 +53,24 @@ public class ReviewAmqpConfiguration {
     }
 
     @Bean
-    public Binding OrderPaymentBinding(FanoutExchange fanoutExchange) {
+    public FanoutExchange deadLetterExchange() {
+        return ExchangeBuilder
+                .fanoutExchange(PaymentExchangeName.PAYMENT_EXCHANGE_DLQ)
+                .build();
+    }
+
+    @Bean
+    public Binding OrderPaymentBinding() {
         return BindingBuilder
                 .bind(reviewInfoQueue())
-                .to(fanoutExchange);
+                .to(fanoutExchange());
+    }
+
+    @Bean
+    public Binding OrderPaymentBindingDLQ() {
+        return BindingBuilder
+                .bind(reviewInfoQueueDLQ())
+                .to(deadLetterExchange());
     }
 
     @Bean

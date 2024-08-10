@@ -11,6 +11,14 @@ public class ReviewListener {
 
     @RabbitListener(queues = PaymentQueueName.PAYMENT_REVIEW_INFO)
     public void receiveMessage(PaymentDto paymentDto) {
+
+        System.out.println(paymentDto.getId());
+        System.out.println(paymentDto.getNumber());
+
+        if(paymentDto.getNumber().equals("0000")){
+            throw new RuntimeException("Invalid payment number");
+        }
+
         var message = """
             It is necessary to create a entry for the order with:
             Payment Id: %s
